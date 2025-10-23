@@ -1,0 +1,84 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   checkPlayerPos.c                                   :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: anouri <anouri@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/03/24 15:24:38 by anouri            #+#    #+#             */
+/*   Updated: 2024/03/24 17:34:47 by anouri           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "../includes/game.h"
+
+static void	east_or_west(t_game *game, char dir)
+{
+	if (dir == 'E')
+	{
+		game->dir_x = 0;
+		game->dir_y = -1;
+		game->plane_x = -0.7;
+		game->plane_y = 0;
+	}
+	else if (dir == 'W')
+	{
+		game->dir_x = 0;
+		game->dir_y = 1;
+		game->plane_x = 0.7;
+		game->plane_y = 0;
+	}
+}
+
+static void	north_or_south(t_game *game, char dir)
+{
+	if (dir == 'N')
+	{
+		game->dir_x = 1;
+		game->dir_y = 0;
+		game->plane_x = 0;
+		game->plane_y = -0.7;
+	}
+	else if (dir == 'S')
+	{
+		game->dir_x = -1;
+		game->dir_y = 0;
+		game->plane_x = 0;
+		game->plane_y = 0.7;
+	}
+}
+
+static void	check_player_pos_quit(t_game *game)
+{
+	ft_perror(ERROR_MULT_PLA_POS);
+	free_part(game);
+	exit(EXIT_SUCCESS);
+}
+
+void	check_player_pos(t_game *game)
+{
+	int	dir_found;
+	int	i;
+	int	j;
+
+	dir_found = 0;
+	i = 0;
+	while (game->map[i])
+	{
+		j = 0;
+		while (game->map[i][j])
+		{
+			if (game->map[i][j] == 'N' || game->map[i][j] == 'S'
+				|| game->map[i][j] == 'E' || game->map[i][j] == 'W')
+			{
+				dir_found += 1;
+				east_or_west(game, game->map[i][j]);
+				north_or_south(game, game->map[i][j]);
+			}
+			j++;
+		}
+		i++;
+	}
+	if (dir_found != 1)
+		check_player_pos_quit(game);
+}
